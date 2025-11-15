@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "ESNext", // Use ESNext for ESM
+    "moduleResolution": "Node", // Resolve modules like Node.js
+    "target": "ES6", // Target modern JavaScript
+    "outDir": "./dist", // Output directory for compiled files
+    "rootDir": "./", // Root directory for source files
+    "strict": true, // Enable strict type checking
+    "esModuleInterop": true, // Allow default imports from CommonJS
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "sourceMap": true // Enable source maps for debugging
+  },
+  "include": [
+    "**/*.ts"
+  ], // Include all TypeScript files
+  "exclude": [
+    "node_modules"
+  ] // Exclude node_modules
+}
