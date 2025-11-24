@@ -7,7 +7,7 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { checkStatsForUser } from './league.js';
+import { checkStatsForUser } from './utils/league.js';
 import { mapPersonToPuuid } from './constants/puuids.js';
 import { checkAllTFTStats } from './utils/tftRankedGenerator.js';
 // Create an express app

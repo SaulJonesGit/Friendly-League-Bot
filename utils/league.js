@@ -1,12 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
-import { DiscordRequest } from './utils.js';
-import { isNegative } from './helpers/isNegative.js';
-import { getMatches, getMatchInfo } from './api/index.js';
-import { mapPersonToPuuid } from './constants/puuids.js';
-
-const app = express();
-app.use(express.json());
+import { DiscordRequest } from '../utils.js';
+import { isNegative } from '../helpers/isNegative.js';
+import { getMatches, getMatchInfo } from '../api/index.js';
+import { mapPersonToPuuid } from '../constants/puuids.js';
 
 const BOT_TOKEN = process.env.DISCORD_TOKEN;
 
