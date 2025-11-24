@@ -1,5 +1,5 @@
 import { mapPersonToPuuid } from '../constants/puuids.js';
-import getTftRanks from '../api/getTftRanks.js';
+import { getTftRanks } from '../api/index.js';
 import { tftPlayers } from '../constants/tftPlayers.js';
 
 const rankOrder = ["CHALLENGER", "MASTER", "DIAMOND", "EMERALD", "PLATINUM", "GOLD", "SILVER", "BRONZE", "IRON"];
