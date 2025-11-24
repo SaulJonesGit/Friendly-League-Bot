@@ -1,4 +1,4 @@
-
+import { MATCH_INFO_ENDPOINT } from '../constants/endpoints.js';
 import 'dotenv/config';
 import axios from 'axios';
 
@@ -6,7 +6,7 @@ import axios from 'axios';
 let getMatchInfo = async (matchID, puuid) => {
 
     // Check if a new match exists
-    const matchInfoEndpoint = process.env.MATCH_INFO_ENDPOINT;
+    const matchInfoEndpoint = MATCH_INFO_ENDPOINT;
 
     if (!matchInfoEndpoint) {
         console.log('Server configuration error');

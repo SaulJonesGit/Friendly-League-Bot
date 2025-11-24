@@ -3,17 +3,10 @@ import express from 'express';
 import { DiscordRequest } from './utils.js';
 import { isNegative } from './helpers/isNegative.js';
 import { getMatches, getMatchInfo } from './api/index.js';
+import { mapPersonToPuuid } from './constants/puuids.js';
 
 const app = express();
 app.use(express.json());
-
-export const mapPersonToPuuid = {
-    'TYLA': process.env.TYLA_PUUID,
-    'CORBEN': process.env.CORBEN_PUUID,
-    'GINGY': process.env.GINGY_PUUID,
-    'SAUL': process.env.SAUL_PUUID,
-    'GDO': process.env.GDO_PUUID,
-};
 
 const BOT_TOKEN = process.env.DISCORD_TOKEN;
 

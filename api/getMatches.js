@@ -1,4 +1,4 @@
-
+import { MATCHES_ENDPOINT } from '../constants/endpoints.js';
 import 'dotenv/config';
 import axios from 'axios';
 
@@ -6,7 +6,7 @@ import axios from 'axios';
 let getMatches = async (puuid) => {
 
     const basePath = process.env.BASE_PATH;
-    const matchesEndpoint = process.env.MATCHES_ENDPOINT;
+    const matchesEndpoint = MATCHES_ENDPOINT;
 
     if (!basePath || !matchesEndpoint) {
         console.log('Server configuration error');
