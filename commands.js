@@ -19,9 +19,17 @@ const COIN_FLIP_COMMAND = {
   contexts: [0, 1, 2],
 };
 
+const TFT_STATS_COMMAND = {
+  name: 'tft-stats',
+  description: 'Check TFT stats for all users',
+  type: 1,
+  integration_types: [0, 1],
+  contexts: [0, 1, 2],
+};
+
 // Command containing options
 
 
-const ALL_COMMANDS = [FLIRT_COMMAND, COIN_FLIP_COMMAND];
+const ALL_COMMANDS = [FLIRT_COMMAND, COIN_FLIP_COMMAND, TFT_STATS_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);

@@ -7,8 +7,9 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import { checkStatsForUser, mapPersonToPuuid } from './league.js';
-
+import { checkStatsForUser } from './league.js';
+import { mapPersonToPuuid } from './constants/puuids.js';
+import { checkAllTFTStats } from './utils/tftRankedGenerator.js';
 // Create an express app
 const app = express();
 // Get port, or default to 3000
@@ -63,6 +64,17 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
           content: `You flipped a coin and got **${outcome}**! :coin:`,
+        },
+      });
+    }
+
+    if (name === 'tft-stats') {
+      let leaderboard = await checkAllTFTStats();
+
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: leaderboard
         },
       });
     }
