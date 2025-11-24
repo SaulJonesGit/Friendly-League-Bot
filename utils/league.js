@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { DiscordRequest } from '../utils.js';
+import { DiscordRequest } from './discordUtils.js';
 import { isNegative } from '../helpers/isNegative.js';
 import { getMatches, getMatchInfo } from '../api/index.js';
 import { mapPersonToPuuid } from '../constants/puuids.js';

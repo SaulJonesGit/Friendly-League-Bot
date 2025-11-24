@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { capitalize, InstallGlobalCommands } from './utils.js';
+import { InstallGlobalCommands } from './utils/discordUtils.js';
 
 // Simple test command
 const FLIRT_COMMAND = {
