@@ -13,7 +13,8 @@
     "start": "npm run build && node dist/app.js",
     "register": "npm run build && node dist/commands.js",
     "dev": "tsx watch app.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generate-ids": "tsx scripts/runGenerateIDs.ts"
   },
   "author": "Saul Jones",
   "license": "MIT",
