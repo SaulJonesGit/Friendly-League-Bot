@@ -1,12 +1,9 @@
 import { getTftRanks } from "../api/index.js";
 import { tftPlayers } from "../constants/tftPlayers.js";
 import { puuids } from "../constants/puuids/tftPuuid.js";
+import { GetTftRanksResponse } from "../types/tftTypes.js";
 
-type TftRankData = {
-  tier: string;
-  rank: string;
-  leaguePoints: number;
-};
+type TftRankData = GetTftRanksResponse[number];
 
 type TftLeaderboardEntry = {
   person: string;
@@ -26,6 +23,7 @@ const rankOrder: string[] = [
   "BRONZE",
   "IRON",
 ];
+
 const compareRanks = (
   a: TftLeaderboardEntry,
   b: TftLeaderboardEntry,
@@ -34,6 +32,7 @@ const compareRanks = (
   if (tierDifference !== 0) {
     return tierDifference;
   }
+
   const romanToInt = (roman: string): number => {
     const romanMap = { I: 1, II: 2, III: 3, IV: 4, V: 5 };
     return romanMap[roman.toUpperCase() as keyof typeof romanMap] || 0;
@@ -43,6 +42,7 @@ const compareRanks = (
   if (rankDifference !== 0) {
     return rankDifference;
   }
+
   return b.leaguePoints - a.leaguePoints;
 };
 
@@ -65,9 +65,9 @@ export const checkAllTFTStats = async () => {
     );
   });
 
-  let headerRow = `Today's TFT Rankings:\n`;
+  const headerRow = `Today's TFT Rankings:\n`;
 
-  let leaderboardMessage = leaderboard
+  const leaderboardMessage = leaderboard
     .map(
       (row, index) =>
         `${index + 1}. ${row.person} - ${row.tier} ${row.rank} (${row.leaguePoints} LP)`,
@@ -89,7 +89,12 @@ export const checkStatsForUser = async (
 
   const tftData = (await getTftRanks(puuid)) as TftRankData | null | undefined;
 
-  if (!tftData) {
+  if (
+    !tftData ||
+    !tftData.tier ||
+    !tftData.rank ||
+    tftData.leaguePoints == null
+  ) {
     console.error(`No TFT data found for ${person}`);
     return;
   }

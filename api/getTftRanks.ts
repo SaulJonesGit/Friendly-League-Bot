@@ -1,14 +1,17 @@
 import { TFT_RANKS_ENDPOINT } from "../constants/endpoints.js";
 import "dotenv/config";
 import axios from "axios";
+import { GetTftRanksResponse } from "../types/tftTypes.js";
 
-const getTftRanks = async (puuid: string): Promise<any> => {
+const getTftRanks = async (
+  puuid: string,
+): Promise<GetTftRanksResponse | null> => {
   const basePath = process.env.TFT_BASE_PATH;
   const tftEndpoint = TFT_RANKS_ENDPOINT;
 
   if (!basePath || !tftEndpoint) {
     console.log("Server configuration error");
-    return;
+    return null;
   }
 
   let tftRanksUrl = basePath + tftEndpoint;
@@ -23,10 +26,10 @@ const getTftRanks = async (puuid: string): Promise<any> => {
   }
 
   const tftData = response.data.find(
-    (queue: any) => queue.queueType === "RANKED_TFT",
+    (queue) => queue.queueType === "RANKED_TFT",
   );
 
-  return tftData;
+  return tftData || null;
 };
 
 export default getTftRanks;
