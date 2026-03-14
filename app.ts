@@ -7,9 +7,11 @@ import {
   MessageComponentTypes,
   verifyKeyMiddleware,
 } from "discord-interactions";
+import { Client, GatewayIntentBits } from "discord.js";
 import { checkStatsForUser } from "./utils/league.js";
 import { lolPlayers } from "./constants/leaguePlayers.js";
 import { checkAllTFTStats } from "./utils/tftRankedGenerator.js";
+import { SetAppStatus } from "./utils/discordUtils.js";
 
 type DiscordInteractionRequest = {
   type?: number;
@@ -28,6 +30,31 @@ const app = express();
 // Get port, or default to 3000
 const PORT = process.env.PORT || 3000;
 const publicKey = process.env.PUBLIC_KEY ?? "";
+
+const gatewayClient = new Client({
+  intents: [GatewayIntentBits.Guilds],
+});
+
+gatewayClient.once("clientReady", async () => {
+  try {
+    await SetAppStatus(gatewayClient, "online", "Practicing improv");
+    console.log(
+      `Set bot status to online as ${gatewayClient.user?.tag ?? "unknown"}`,
+    );
+  } catch (error) {
+    console.error("Failed to set bot status", error);
+  }
+});
+
+if (!process.env.DISCORD_TOKEN) {
+  console.warn(
+    "DISCORD_TOKEN is not set; Gateway status updates are disabled.",
+  );
+} else {
+  void gatewayClient.login(process.env.DISCORD_TOKEN).catch((error) => {
+    console.error("Failed to connect Discord Gateway", error);
+  });
+}
 
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
@@ -115,10 +142,53 @@ const checkStatsForAllUsers = (): void => {
 
 checkStatsForAllUsers();
 
-setInterval(() => {
+const statsInterval = setInterval(() => {
   checkStatsForAllUsers();
 }, MESSAGE_INTERVAL);
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log("Listening on port", PORT);
+});
+
+let isShuttingDown = false;
+
+const shutdown = async (signal: NodeJS.Signals): Promise<void> => {
+  if (isShuttingDown) {
+    return;
+  }
+  isShuttingDown = true;
+
+  console.log(`Received ${signal}, shutting down...`);
+  clearInterval(statsInterval);
+
+  try {
+    if (gatewayClient.isReady()) {
+      await SetAppStatus(gatewayClient, "invisible");
+      console.log("Set bot status to invisible before shutdown.");
+    }
+  } catch (error) {
+    console.error("Failed to set shutdown status", error);
+  }
+
+  try {
+    gatewayClient.destroy();
+  } catch (error) {
+    console.error("Failed to close Discord Gateway client", error);
+  }
+
+  server.close(() => {
+    process.exit(0);
+  });
+
+  setTimeout(() => {
+    process.exit(1);
+  }, 5000).unref();
+};
+
+process.on("SIGINT", () => {
+  void shutdown("SIGINT");
+});
+
+process.on("SIGTERM", () => {
+  void shutdown("SIGTERM");
 });

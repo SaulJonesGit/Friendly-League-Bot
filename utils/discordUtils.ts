@@ -1,23 +1,28 @@
-import 'dotenv/config';
+import "dotenv/config";
+import { ActivityType, type Client, type PresenceStatusData } from "discord.js";
 
-type DiscordRequestOptions = Omit<RequestInit, 'body'> & {
+type DiscordRequestOptions = Omit<RequestInit, "body"> & {
   body?: any;
   token?: string;
 };
 
-export async function DiscordRequest(endpoint: string, options: DiscordRequestOptions): Promise<Response> {
+export async function DiscordRequest(
+  endpoint: string,
+  options: DiscordRequestOptions,
+): Promise<Response> {
   // append endpoint to root API URL
-  const url = 'https://discord.com/api/v10/' + endpoint;
+  const url = "https://discord.com/api/v10/" + endpoint;
   // Stringify payloads
   if (options.body) options.body = JSON.stringify(options.body);
   // Use fetch to make requests
   const res = await fetch(url, {
     headers: {
       Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-      'Content-Type': 'application/json; charset=UTF-8',
-      'User-Agent': 'DiscordBot (https://github.com/discord/discord-example-app, 1.0.0)',
+      "Content-Type": "application/json; charset=UTF-8",
+      "User-Agent":
+        "DiscordBot (https://github.com/discord/discord-example-app, 1.0.0)",
     },
-    ...options
+    ...options,
   });
   // throw API errors
   if (!res.ok) {
@@ -29,15 +34,44 @@ export async function DiscordRequest(endpoint: string, options: DiscordRequestOp
   return res;
 }
 
-export async function InstallGlobalCommands(appId: string | undefined, commands: any[]): Promise<void> {
+export async function InstallGlobalCommands(
+  appId: string | undefined,
+  commands: any[],
+): Promise<void> {
   // API endpoint to overwrite global commands
   const endpoint = `applications/${appId}/commands`;
 
   try {
     // This is calling the bulk overwrite endpoint: https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
-    await DiscordRequest(endpoint, { method: 'PUT', body: commands });
+    await DiscordRequest(endpoint, { method: "PUT", body: commands });
   } catch (err) {
     console.error(err);
   }
 }
 
+const allowedStatuses = new Set(["online", "idle", "dnd", "invisible"]);
+
+export async function SetAppStatus(
+  client: Client,
+  status: string,
+  activity?: string,
+): Promise<void> {
+  const normalizedStatus = status.toLowerCase();
+
+  if (!allowedStatuses.has(normalizedStatus)) {
+    throw new Error(
+      `Invalid status "${status}". Use online, idle, dnd, or invisible.`,
+    );
+  }
+
+  if (!client.user) {
+    throw new Error("Client user is not ready yet.");
+  }
+
+  client.user.setPresence({
+    status: normalizedStatus as PresenceStatusData,
+    activities: activity
+      ? [{ name: activity, type: ActivityType.Playing }]
+      : [],
+  });
+}
