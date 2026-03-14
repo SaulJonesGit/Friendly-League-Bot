@@ -1,7 +1,7 @@
 import { MATCH_INFO_ENDPOINT } from "../constants/endpoints.js";
 import "dotenv/config";
 import axios from "axios";
-import { getMatchInfoResponse } from "../types/leagueTypes.js";
+import { GetMatchInfoResponse } from "../types/leagueTypes.js";
 
 const getMatchInfo = async (matchID: string, puuid: string): Promise<any> => {
   const matchInfoEndpoint = MATCH_INFO_ENDPOINT;
@@ -21,7 +21,7 @@ const getMatchInfo = async (matchID: string, puuid: string): Promise<any> => {
   let matchDataEndpoint = basePath + matchInfoEndpoint;
   matchDataEndpoint = matchDataEndpoint.replace("{matchId}", matchID);
 
-  const matchInfoResponse = await axios.get<getMatchInfoResponse>(
+  const matchInfoResponse = await axios.get<GetMatchInfoResponse>(
     matchDataEndpoint + `?api_key=${process.env.LEAGUE_API_KEY}`,
   );
 

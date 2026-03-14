@@ -1,6 +1,6 @@
-export type getMatchesResponse = string[];
+export type GetMatchesResponse = string[];
 
-export type getMatchInfoResponse = {
+export type GetMatchInfoResponse = {
   metadata: {
     dataVersion: string;
     matchId: string;
