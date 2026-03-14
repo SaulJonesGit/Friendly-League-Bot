@@ -11,7 +11,8 @@
   "scripts": {
     "start": "node app.js",
     "register": "node commands.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "generate-ids": "node scripts/runGenerateIDs.js"
   },
   "author": "Saul Jones",
   "license": "MIT",
