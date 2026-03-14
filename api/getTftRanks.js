@@ -1,33 +1,32 @@
-import { MATCHES_ENDPOINT, TFT_RANKS_ENDPOINT } from '../constants/endpoints.js';
-import 'dotenv/config';
-import axios from 'axios';
-
+import { TFT_RANKS_ENDPOINT } from "../constants/endpoints.js";
+import "dotenv/config";
+import axios from "axios";
 
 const getTftRanks = async (puuid) => {
+  const basePath = process.env.TFT_BASE_PATH;
+  const tftEndpoint = TFT_RANKS_ENDPOINT;
 
-    const basePath = process.env.TFT_BASE_PATH;
-    const tftEndpoint = TFT_RANKS_ENDPOINT;
+  if (!basePath || !tftEndpoint) {
+    console.log("Server configuration error");
+    return;
+  }
 
-    if (!basePath || !tftEndpoint) {
-        console.log('Server configuration error');
-        return;
-    }
+  let getTftRanks = basePath + tftEndpoint;
+  getTftRanks = getTftRanks.replace("{puuid}", puuid);
+  getTftRanks = getTftRanks.concat(`?api_key=${process.env.TFT_API_KEY}`);
 
-    let getTftRanks = basePath + tftEndpoint;
-    getTftRanks = getTftRanks.replace('{puuid}', puuid);
-    getTftRanks = getTftRanks.concat(`?api_key=${process.env.LEAGUE_API_KEY}`);
+  const response = await axios.get(getTftRanks);
 
-    const response = await axios.get(getTftRanks);
+  if (response.status !== 200) {
+    console.log("Error fetching matches:", response.statusText);
+    return null;
+  }
 
-    if (response.status !== 200) {
-        console.log('Error fetching matches:', response.statusText);
-        return null;
-    }
+  const tftData = response.data.find(
+    (queue) => queue.queueType === "RANKED_TFT",
+  );
 
-    const tftData = response.data.find((queue) => queue.queueType === 'RANKED_TFT');
-
-    return tftData;
-
-}
+  return tftData;
+};
 
 export default getTftRanks;
