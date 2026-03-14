@@ -1,7 +1,7 @@
 import { MATCHES_ENDPOINT } from "../constants/endpoints.js";
 import "dotenv/config";
 import axios from "axios";
-import { getMatchesResponse } from "../types/leagueTypes.js";
+import { GetMatchesResponse } from "../types/leagueTypes.js";
 
 const getMatches = async (
   puuid: string,
@@ -21,7 +21,7 @@ const getMatches = async (
     `&api_key=${process.env.LEAGUE_API_KEY}`,
   );
 
-  const response = await axios.get<getMatchesResponse>(matchesURL);
+  const response = await axios.get<GetMatchesResponse>(matchesURL);
 
   if (response.status !== 200) {
     console.log("Error fetching matches:", response.statusText);
