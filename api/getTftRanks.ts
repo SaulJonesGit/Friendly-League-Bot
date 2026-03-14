@@ -3,7 +3,7 @@ import 'dotenv/config';
 import axios from 'axios';
 
 
-const getTftRanks = async (puuid) => {
+const getTftRanks = async (puuid: string): Promise<any> => {
 
     const basePath = process.env.TFT_BASE_PATH;
     const tftEndpoint = TFT_RANKS_ENDPOINT;
@@ -13,18 +13,18 @@ const getTftRanks = async (puuid) => {
         return;
     }
 
-    let getTftRanks = basePath + tftEndpoint;
-    getTftRanks = getTftRanks.replace('{puuid}', puuid);
-    getTftRanks = getTftRanks.concat(`?api_key=${process.env.LEAGUE_API_KEY}`);
+    let tftRanksUrl = basePath + tftEndpoint;
+    tftRanksUrl = tftRanksUrl.replace('{puuid}', puuid);
+    tftRanksUrl = tftRanksUrl.concat(`?api_key=${process.env.LEAGUE_API_KEY}`);
 
-    const response = await axios.get(getTftRanks);
+    const response = await axios.get<any[]>(tftRanksUrl);
 
     if (response.status !== 200) {
         console.log('Error fetching matches:', response.statusText);
         return null;
     }
 
-    const tftData = response.data.find((queue) => queue.queueType === 'RANKED_TFT');
+    const tftData = response.data.find((queue: any) => queue.queueType === 'RANKED_TFT');
 
     return tftData;
 

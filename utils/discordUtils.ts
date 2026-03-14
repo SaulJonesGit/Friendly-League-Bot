@@ -1,6 +1,11 @@
 import 'dotenv/config';
 
-export async function DiscordRequest(endpoint, options) {
+type DiscordRequestOptions = Omit<RequestInit, 'body'> & {
+  body?: any;
+  token?: string;
+};
+
+export async function DiscordRequest(endpoint: string, options: DiscordRequestOptions): Promise<Response> {
   // append endpoint to root API URL
   const url = 'https://discord.com/api/v10/' + endpoint;
   // Stringify payloads
@@ -24,7 +29,7 @@ export async function DiscordRequest(endpoint, options) {
   return res;
 }
 
-export async function InstallGlobalCommands(appId, commands) {
+export async function InstallGlobalCommands(appId: string | undefined, commands: any[]): Promise<void> {
   // API endpoint to overwrite global commands
   const endpoint = `applications/${appId}/commands`;
 

@@ -10,20 +10,35 @@ import {
 import { checkStatsForUser } from './utils/league.js';
 import { mapPersonToPuuid } from './constants/puuids.js';
 import { checkAllTFTStats } from './utils/tftRankedGenerator.js';
+
+type DiscordInteractionRequest = {
+  id?: string;
+  type?: number;
+  data?: {
+    name?: string;
+  };
+  member?: {
+    nick?: string;
+    user?: {
+      global_name?: string;
+    };
+  };
+};
+
 // Create an express app
 const app = express();
 // Get port, or default to 3000
 const PORT = process.env.PORT || 3000;
-// To keep track of our active games
-const activeGames = {};
+const publicKey = process.env.PUBLIC_KEY ?? '';
 
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
  * Parse request body and verifies incoming requests using discord-interactions package
  */
-app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async function (req, res) {
+app.post('/interactions', verifyKeyMiddleware(publicKey), async function (req: any, res: any) {
   // Interaction id, type and data
-  const { id, type, data } = req.body;
+  const body = (req.body ?? {}) as DiscordInteractionRequest;
+  const { type, data } = body;
 
   /**
    * Handle verification requests
@@ -37,8 +52,8 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
    * See https://discord.com/developers/docs/interactions/application-commands#slash-commands
    */
   if (type === InteractionType.APPLICATION_COMMAND) {
-    const { name } = data;
-    const username = req.body.member?.nick || req.body.member?.user?.global_name;
+    const name = data?.name;
+    const username = body.member?.nick || body.member?.user?.global_name || 'there';
 
     // "test" command
     if (name === 'flirt') {
@@ -90,9 +105,9 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
 const MESSAGE_INTERVAL = 1 * 60 * 1000;
 
-const checkStatsForAllUsers = () => {
+const checkStatsForAllUsers = (): void => {
   Object.keys(mapPersonToPuuid).forEach((person) => {
-    checkStatsForUser(person);
+    void checkStatsForUser(person);
   });
 };
 

@@ -1,4 +1,4 @@
-export const tftPlayers = [
+export const tftPlayers: string[] = [
     'TYLA',
     'CORBEN',
     'GINGY',
