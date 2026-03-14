@@ -10,12 +10,24 @@ import {
 import { checkStatsForUser } from "./utils/league.js";
 import { lolPlayers } from "./constants/leaguePlayers.js";
 import { checkAllTFTStats } from "./utils/tftRankedGenerator.js";
+
+type DiscordInteractionRequest = {
+  type?: number;
+  data?: {
+    name?: string;
+  };
+  member?: {
+    nick?: string;
+    user?: {
+      global_name?: string;
+    };
+  };
+};
 // Create an express app
 const app = express();
 // Get port, or default to 3000
 const PORT = process.env.PORT || 3000;
-// To keep track of our active games
-const activeGames = {};
+const publicKey = process.env.PUBLIC_KEY ?? "";
 
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
@@ -23,10 +35,11 @@ const activeGames = {};
  */
 app.post(
   "/interactions",
-  verifyKeyMiddleware(process.env.PUBLIC_KEY),
-  async function (req, res) {
+  verifyKeyMiddleware(publicKey),
+  async function (req: any, res: any) {
     // Interaction id, type and data
-    const { id, type, data } = req.body;
+    const body = (req.body ?? {}) as DiscordInteractionRequest;
+    const { type, data } = body;
 
     /**
      * Handle verification requests
@@ -40,9 +53,9 @@ app.post(
      * See https://discord.com/developers/docs/interactions/application-commands#slash-commands
      */
     if (type === InteractionType.APPLICATION_COMMAND) {
-      const { name } = data;
+      const name = data?.name;
       const username =
-        req.body.member?.nick || req.body.member?.user?.global_name;
+        body.member?.nick || body.member?.user?.global_name || "there";
 
       // "test" command
       if (name === "flirt") {
@@ -94,9 +107,9 @@ app.post(
 
 const MESSAGE_INTERVAL = 1 * 60 * 1000;
 
-const checkStatsForAllUsers = () => {
+const checkStatsForAllUsers = (): void => {
   lolPlayers.forEach((person) => {
-    checkStatsForUser(person);
+    void checkStatsForUser(person);
   });
 };
 

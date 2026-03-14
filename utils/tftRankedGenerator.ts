@@ -2,7 +2,20 @@ import { getTftRanks } from "../api/index.js";
 import { tftPlayers } from "../constants/tftPlayers.js";
 import { puuids } from "../constants/puuids/tftPuuid.js";
 
-const rankOrder = [
+type TftRankData = {
+  tier: string;
+  rank: string;
+  leaguePoints: number;
+};
+
+type TftLeaderboardEntry = {
+  person: string;
+  tier: string;
+  rank: string;
+  leaguePoints: number;
+};
+
+const rankOrder: string[] = [
   "CHALLENGER",
   "MASTER",
   "DIAMOND",
@@ -13,14 +26,17 @@ const rankOrder = [
   "BRONZE",
   "IRON",
 ];
-const compareRanks = (a, b) => {
+const compareRanks = (
+  a: TftLeaderboardEntry,
+  b: TftLeaderboardEntry,
+): number => {
   const tierDifference = rankOrder.indexOf(a.tier) - rankOrder.indexOf(b.tier);
   if (tierDifference !== 0) {
     return tierDifference;
   }
-  const romanToInt = (roman) => {
+  const romanToInt = (roman: string): number => {
     const romanMap = { I: 1, II: 2, III: 3, IV: 4, V: 5 };
-    return romanMap[roman.toUpperCase()] || 0;
+    return romanMap[roman.toUpperCase() as keyof typeof romanMap] || 0;
   };
 
   const rankDifference = romanToInt(a.rank) - romanToInt(b.rank);
@@ -31,7 +47,7 @@ const compareRanks = (a, b) => {
 };
 
 export const checkAllTFTStats = async () => {
-  const leaderboard = [];
+  const leaderboard: TftLeaderboardEntry[] = [];
 
   for (const person of tftPlayers) {
     const stats = await checkStatsForUser(person);
@@ -61,7 +77,9 @@ export const checkAllTFTStats = async () => {
   return headerRow + leaderboardMessage;
 };
 
-export const checkStatsForUser = async (person) => {
+export const checkStatsForUser = async (
+  person: string,
+): Promise<TftLeaderboardEntry | undefined> => {
   const puuid = puuids.find((entry) => entry.name === person)?.puuid;
 
   if (!puuid) {
@@ -69,7 +87,7 @@ export const checkStatsForUser = async (person) => {
     return;
   }
 
-  let tftData = await getTftRanks(puuid);
+  const tftData = (await getTftRanks(puuid)) as TftRankData | null | undefined;
 
   if (!tftData) {
     console.error(`No TFT data found for ${person}`);

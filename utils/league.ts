@@ -6,10 +6,10 @@ import { puuids } from "../constants/puuids/leaguePuuid.js";
 
 const BOT_TOKEN = process.env.DISCORD_TOKEN;
 
-let savedMatchIds = {};
+const savedMatchIds: Record<string, string> = {};
 
-function sendMessage(content) {
-  DiscordRequest(`/channels/479579787589845001/messages`, {
+function sendMessage(content: string): void {
+  void DiscordRequest(`/channels/479579787589845001/messages`, {
     method: "POST",
     body: {
       content,
@@ -19,7 +19,7 @@ function sendMessage(content) {
 }
 
 // Function to check stats for a specific user
-export const checkStatsForUser = async (person) => {
+export const checkStatsForUser = async (person: string): Promise<void> => {
   const puuid = puuids.find((entry) => entry.name === person)?.puuid;
 
   if (!puuid) {
@@ -27,8 +27,7 @@ export const checkStatsForUser = async (person) => {
     return;
   }
 
-  // Get the latest match ID for the user
-  let matchId = await getMatches(puuid);
+  const matchId = await getMatches(puuid);
 
   if (!matchId) {
     console.error(`No match found for ${person}`);
@@ -49,11 +48,11 @@ export const checkStatsForUser = async (person) => {
 
   savedMatchIds[person] = matchId;
 
-  let personData = await getMatchInfo(matchId, puuid);
+  const personData = await getMatchInfo(matchId, puuid);
 
   if (personData) {
-    let isNegativeVar = isNegative(personData, person);
-    let wonGame = personData.win ? "won" : "lost";
+    const isNegativeVar = isNegative(personData, person);
+    const wonGame = personData.win ? "won" : "lost";
 
     if (isNegativeVar) {
       sendMessage(

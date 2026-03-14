@@ -1,6 +1,4 @@
-
-
-export function isNegative(personData, person) {
+export function isNegative(personData: any, person: string): boolean {
     let isNegative = false;
 
     try {

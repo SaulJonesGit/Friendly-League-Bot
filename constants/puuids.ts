@@ -1,4 +1,4 @@
-export const mapPersonToPuuid = {
+export const mapPersonToPuuid: Record<string, string | undefined> = {
     'TYLA': process.env.TYLA_PUUID,
     'CORBEN': process.env.CORBEN_PUUID,
     'GINGY': process.env.GINGY_PUUID,

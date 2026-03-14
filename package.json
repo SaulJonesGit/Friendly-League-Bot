@@ -3,16 +3,18 @@
   "private": true,
   "version": "1.0.0",
   "description": "Friendly League Bot",
-  "main": "app.js",
+  "main": "dist/app.js",
   "type": "module",
   "engines": {
     "node": ">=18.x"
   },
   "scripts": {
-    "start": "node app.js",
-    "register": "node commands.js",
-    "dev": "nodemon app.js",
-    "generate-ids": "node scripts/runGenerateIDs.js"
+    "build": "tsc",
+    "start": "npm run build && node dist/app.js",
+    "register": "npm run build && node dist/commands.js",
+    "dev": "tsx watch app.ts",
+    "typecheck": "tsc --noEmit",
+    "generate-ids": "tsx scripts/runGenerateIDs.ts"
   },
   "author": "Saul Jones",
   "license": "MIT",
@@ -23,6 +25,11 @@
     "axios": "latest"
   },
   "devDependencies": {
-    "nodemon": "^3.0.0"
+    "nodemon": "^3.0.0",
+    "jest":"30.3.0",
+    "typescript": "^5.8.2",
+    "tsx": "^4.20.3",
+    "@types/node": "^22.14.1",
+    "@types/express": "^5.0.1"
   }
 }
